@@ -3,14 +3,11 @@ package org.transferer.swing.components;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,7 +15,6 @@ import javax.swing.JOptionPane;
 
 import org.server.client.contract.Client;
 import org.server.client.contract.Reader;
-import org.server.client.contract.Reader.RESPONSE_TYPE;
 import org.server.client.contract.Server;
 import org.server.client.contract.Wifi;
 import org.server.client.contract.Work;
@@ -26,6 +22,7 @@ import org.server.client.contract.Writer;
 import org.server.client.factory.imple.WifiFactory;
 import org.server.client.thread.ThreadUtilityFactory;
 import org.server.client.thread.WorkerThread;
+import org.transferer.swing.communication.StablishFileTransferCommunication;
 import org.transferer.swing.contracts.WindowFrame;
 import org.transferer.swing.listeners.OpenFileChooser;
 
@@ -66,67 +63,44 @@ public class AppFrame extends JFrame implements WindowFrame {
 						String fileAbsolutePath = null;
 						File file = null;
 						Reader reader = server.getReader();
+						Writer writer = server.getWriter();
 						if (onRequest(reader.getRequestAddress())) {
-							System.out.println("Response from vernetwork client:" + reader.read(RESPONSE_TYPE.STRING));
-							Writer writer = server.getWriter();
-							while (true) {
-								String responseFromClient = (String) reader.read(RESPONSE_TYPE.STRING);
 
-								writer.write("You are requesting for file Do you want to proceed:\n a)yes \n b)no"
-										.getBytes());
-								responseFromClient = (String) reader.read(RESPONSE_TYPE.STRING);
-								if ("a".equalsIgnoreCase(responseFromClient)
-										|| "yes".equalsIgnoreCase(responseFromClient)) {
-									synchronized (ThreadUtilityFactory.getInstance().get("button")) {
-										ThreadUtilityFactory.getInstance().get("button").wait();
-									}
-									frame.remove((JButton) ThreadUtilityFactory.getInstance().get("button"));
-									fileAbsolutePath = (String) ((AppButton) ThreadUtilityFactory.getInstance()
-											.get("button")).getData("filesList");
-									file = new File(fileAbsolutePath);
-									writer.write(("file-name:" + file.getName()).getBytes());
-									writer.flush();
-
-								} else if ("ok".equalsIgnoreCase(responseFromClient)) {
-									break;
-								} else if ("b".equalsIgnoreCase(responseFromClient)
-										|| "no".equalsIgnoreCase(responseFromClient)) {
-									writer.flushAndClose();
-									return;
-								} else {
-									writer.write("If you wish to close the connection then type: b or no".getBytes());
-								}
+							synchronized (ThreadUtilityFactory.getInstance().get("button")) {
+								ThreadUtilityFactory.getInstance().get("button").wait();
 							}
-							// writer.write("Hi this server checking multiple
-							// clients....".getBytes());
-							// writer.flushAndClose();
+							System.out.println("Removing the button..");
+							frame.remove((JButton) ThreadUtilityFactory.getInstance().get("button"));
+							fileAbsolutePath = (String) ((AppButton) ThreadUtilityFactory.getInstance().get("button"))
+									.getData("filesList");
+							file = new File(fileAbsolutePath);
 
-							FileInputStream inputStream = new FileInputStream(file);
-							byte[] buffer = new byte[(file.length() / 1000000 > 5) ? 1000000 : 4096];
+							StablishFileTransferCommunication communication = new StablishFileTransferCommunication();
+							communication.setReader(reader);
+							communication.setWriter(writer);
+							communication.startConversationAsServer(fileAbsolutePath);
+							/*FileInputStream inputStream = new FileInputStream(file);
+							byte[] buffer = new byte[4096];//(file.length() / 1000000 > 5) ? 1000000 : 
 							System.out.println("File size.." + (file.length() / 1000000));
+							System.out.println("Writing file to client");
 							while ((inputStream.read(buffer)) != -1) {
-
+								System.out.println(new String(buffer, "UTF-8"));
 								writer.write(buffer);
 								if (file.length() / 1000000 > 5) {
-									Thread.sleep(200);
+									Thread.sleep(100);
 								}
-								// System.out.println("Writing buffer:"
-								// +
-								// new String(buffer, "UTF-8"));
+
 								writer.flush();
 							}
+							writer.write(buffer);
+							writer.flush();
 							inputStream.close();
-							// System.out.println("Got the writer now waiting
-							// ofr the reader..:" + filesList);
 
-							// writer.write("hi this is anish
-							// verifying..".getBytes());
 							System.out.println("response send.");
-							writer.flushAndClose();
+							if (!writer.isClosed())
+								writer.flushAndClose();*/
 						}
 						ThreadUtilityFactory.getInstance().removeAll();
-						// Thread.sleep(300);
-						// }
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -146,39 +120,37 @@ public class AppFrame extends JFrame implements WindowFrame {
 	public void startClient() {
 		Wifi wifi = WifiFactory.getInstance();
 		final Client client = wifi.getClient();
-		client._init(getHostAddress(), 0, 0);
+		client._init(getHostAddress(), 80, 0);
+		System.out.println("Now client is connected to server success fully..");
+		Map<Object, Object> threadLocalMap = ThreadUtilityFactory.getInstance().getMap();
 		WorkerThread.getWorker().startWorking(new Work() {
 
 			public void doWork() {
 				try {
+					System.out.println("Starting Reading data in client..");
 					Reader reader = client.getReader();
-					String response = (String) reader.read(RESPONSE_TYPE.STRING);
-					System.out.println("Please response to Q.");
-					System.out.println(response);
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-					String command = null;
-					boolean readFile = false;
-					String fileName = "";
 					Writer writer = client.getWriter();
-					while (true) {
-						command = bufferedReader.readLine();
-						if (fileName != null && "ok".equalsIgnoreCase(command)) {
-							readFile = true;
-						}
-						writer.write(command.getBytes());
-						writer.flush();
-						if (readFile) {
-							FileOutputStream outputStream = new FileOutputStream(new File(fileName));
-							outputStream.write((byte[]) reader.read(RESPONSE_TYPE.BYTE));
-							outputStream.flush();
-							outputStream.close();
-							break;
-						}
-						response = (String) reader.read(RESPONSE_TYPE.STRING);
-						if (response.contains("file-name:"))
-							fileName = response.split("file-name:")[1];
+					System.out.println("Got writer and reader..");
+					StablishFileTransferCommunication communication = new StablishFileTransferCommunication();
+					communication.setReader(reader);
+					communication.setWriter(writer);
+					System.out.println("set to the communication...");
+					communication.startConversationAsClient("D:/");
+					/*String fileName = communication.startConversationAsClient();
+					fileName = "D:/" + fileName;
+					System.out.println("Writing file:" + fileName);
+					FileOutputStream outputStream = new FileOutputStream(new File(fileName));
+					InputStream inputStream = reader.getInputStream();
+					byte[] buffer = new byte[4096];
+					while (inputStream.read(buffer) != -1) {
+						outputStream.write(buffer);
 					}
-
+					System.out.println("File Successfully written..");
+					outputStream.flush();
+					outputStream.close();
+					reader.close();
+					if (!writer.isClosed())
+						writer.flushAndClose();*/
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -201,7 +173,7 @@ public class AppFrame extends JFrame implements WindowFrame {
 					System.out.println("Is Any Local back address:" + address.isAnyLocalAddress());
 					System.out.println("---------------------------------");
 					if (address.isSiteLocalAddress())
-						return address.getHostAddress() + ":8987";
+						return address.getHostAddress();
 				}
 			}
 		} catch (Exception ex) {

@@ -1,8 +1,11 @@
 package org.transferer;
 
+import java.io.File;
+
 import org.server.client.contract.Work;
 import org.server.client.thread.WorkerThread;
 import org.transferer.swing.components.AppFrame;
+import org.transferer.swing.fileSystem.FileSystemUtility;
 
 public class Main {
 
@@ -11,7 +14,7 @@ public class Main {
 		frame.setLayoutFlow();
 		frame.setSize(400, 400, 400, 400);
 		frame.setVisible(true);
-		frame.startClient();
+		frame.startClient(FileSystemUtility.getUserHomeDirectory().getAbsolutePath() + File.separator);
 		WorkerThread.getWorker().startWorking(new Work() {
 
 			public void doWork() {

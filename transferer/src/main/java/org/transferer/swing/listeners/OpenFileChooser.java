@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,13 +28,18 @@ public class OpenFileChooser implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		AppFileChooser fileChooser = new AppFileChooser();
+		fileChooser.setMultiSelectionEnabled(true);
 		String actionCommand = e.getActionCommand();
 		if ("Choose File".equals(actionCommand)) {
 			int odInt = fileChooser.showOpenDialog(((JFrame) component).getContentPane());
-			File filesToBeSend = fileChooser.getSelectedFile();
+			File[] filesToBeSend = fileChooser.getSelectedFiles();
 			if ((odInt == JFileChooser.APPROVE_OPTION) && filesToBeSend != null) {
-				((AppButton) buComponent).addData("filesList", filesToBeSend.getAbsolutePath());
-				System.out.println("selected Files..." + filesToBeSend.getAbsolutePath());
+				List<String> listOfFileName = new ArrayList<String>();
+				for (File file : filesToBeSend) {
+					listOfFileName.add(file.getAbsolutePath());
+				}
+				((AppButton) buComponent).addData("filesList", listOfFileName);
+				System.out.println("selected Files..." + listOfFileName);
 
 			}
 

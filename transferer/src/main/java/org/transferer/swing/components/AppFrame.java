@@ -3,17 +3,16 @@ package org.transferer.swing.components;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.io.File;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.server.client.contract.Client;
+import org.server.client.contract.IpAddressDetail;
 import org.server.client.contract.Reader;
 import org.server.client.contract.Server;
 import org.server.client.contract.Wifi;
@@ -24,6 +23,7 @@ import org.server.client.thread.ThreadUtilityFactory;
 import org.server.client.thread.WorkerThread;
 import org.transferer.swing.communication.StablishFileTransferCommunication;
 import org.transferer.swing.contracts.WindowFrame;
+import org.transferer.swing.listeners.ActiveIpChooser;
 import org.transferer.swing.listeners.OpenFileChooser;
 
 public class AppFrame extends JFrame implements WindowFrame {
@@ -56,12 +56,11 @@ public class AppFrame extends JFrame implements WindowFrame {
 		while (true) {
 			WorkerThread.getWorker().startWorking(new Work() {
 
+				@SuppressWarnings("unchecked")
 				public void doWork() {
 					try {
 						System.out.println("Statring work of main Thread..");
-						// while (true) {
-						String fileAbsolutePath = null;
-						File file = null;
+						List<String> fileAbsolutePath = null;
 						Reader reader = server.getReader();
 						Writer writer = server.getWriter();
 						if (onRequest(reader.getRequestAddress())) {
@@ -71,34 +70,17 @@ public class AppFrame extends JFrame implements WindowFrame {
 							}
 							System.out.println("Removing the button..");
 							frame.remove((JButton) ThreadUtilityFactory.getInstance().get("button"));
-							fileAbsolutePath = (String) ((AppButton) ThreadUtilityFactory.getInstance().get("button"))
-									.getData("filesList");
-							file = new File(fileAbsolutePath);
+							fileAbsolutePath = (List<String>) ((AppButton) ThreadUtilityFactory.getInstance()
+									.get("button")).getData("filesList");
 
 							StablishFileTransferCommunication communication = new StablishFileTransferCommunication();
 							communication.setReader(reader);
 							communication.setWriter(writer);
-							communication.startConversationAsServer(fileAbsolutePath);
-							/*FileInputStream inputStream = new FileInputStream(file);
-							byte[] buffer = new byte[4096];//(file.length() / 1000000 > 5) ? 1000000 : 
-							System.out.println("File size.." + (file.length() / 1000000));
-							System.out.println("Writing file to client");
-							while ((inputStream.read(buffer)) != -1) {
-								System.out.println(new String(buffer, "UTF-8"));
-								writer.write(buffer);
-								if (file.length() / 1000000 > 5) {
-									Thread.sleep(100);
-								}
-
-								writer.flush();
+							for (String filePath : fileAbsolutePath) {
+								communication.startConversationAsServer(filePath);
+								System.out.println("File sent..");
 							}
-							writer.write(buffer);
-							writer.flush();
-							inputStream.close();
-
-							System.out.println("response send.");
-							if (!writer.isClosed())
-								writer.flushAndClose();*/
+							writer.flushAndClose();
 						}
 						ThreadUtilityFactory.getInstance().removeAll();
 					} catch (Exception ex) {
@@ -117,12 +99,56 @@ public class AppFrame extends JFrame implements WindowFrame {
 		}
 	}
 
-	public void startClient() {
+	@SuppressWarnings("deprecation")
+	public void startClient(final String fileDirectory) {
+		System.out.println("File Directory:" + fileDirectory);
+		repaintTheScreen();
 		Wifi wifi = WifiFactory.getInstance();
 		final Client client = wifi.getClient();
-		client._init(getHostAddress(), 80, 0);
+		List<IpAddressDetail> activeIps = client.getActiveAddress();
+		ActiveIpChooser ipChooser = new ActiveIpChooser();
+		List<String> thisSystemIp = new LinkedList<String>();
+		try {
+			InetAddress[] inetAddresses = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+			for (InetAddress inetAddress : inetAddresses) {
+				thisSystemIp.add(inetAddress.getHostAddress());
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		boolean isCurrentSysIp = false;
+		for (IpAddressDetail ip : activeIps) {
+
+			for (String currentSysIp : thisSystemIp) {
+				if (currentSysIp.equals(ip.getIpAddress())) {
+					isCurrentSysIp = false;
+				}
+			}
+			if (!isCurrentSysIp) {
+				try {
+					System.out.println("ip:" + ip.getIpAddress());
+					AppButton button = new AppButton(ip.getName());
+					button.addActionListener(ipChooser);
+					System.out.println("button label:" + button.getLabel() + " ip address:" + ip.toString());
+					ipChooser.addButtonDetails(ip.getName(), ip.getIpAddress());
+					this.add(button);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		System.out.println("Going to wait state for listening ip choose.");
+		synchronized (ipChooser) {
+			try {
+				ipChooser.wait();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		String serverIp = ipChooser.getSelectedIpAddress();
+		System.out.println("Connecting to Ip:" + serverIp);
+		client._init(serverIp, 80, 0);
 		System.out.println("Now client is connected to server success fully..");
-		Map<Object, Object> threadLocalMap = ThreadUtilityFactory.getInstance().getMap();
 		WorkerThread.getWorker().startWorking(new Work() {
 
 			public void doWork() {
@@ -135,51 +161,14 @@ public class AppFrame extends JFrame implements WindowFrame {
 					communication.setReader(reader);
 					communication.setWriter(writer);
 					System.out.println("set to the communication...");
-					communication.startConversationAsClient("D:/");
-					/*String fileName = communication.startConversationAsClient();
-					fileName = "D:/" + fileName;
-					System.out.println("Writing file:" + fileName);
-					FileOutputStream outputStream = new FileOutputStream(new File(fileName));
-					InputStream inputStream = reader.getInputStream();
-					byte[] buffer = new byte[4096];
-					while (inputStream.read(buffer) != -1) {
-						outputStream.write(buffer);
-					}
-					System.out.println("File Successfully written..");
-					outputStream.flush();
-					outputStream.close();
-					reader.close();
-					if (!writer.isClosed())
-						writer.flushAndClose();*/
+					communication.startConversationAsClient(fileDirectory);
+					System.out.println("Release All Threads resources..");
+					ThreadUtilityFactory.getInstance().removeAll();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		});
-	}
-
-	public String getHostAddress() {
-		try {
-			for (Enumeration networkInterface = NetworkInterface.getNetworkInterfaces(); networkInterface
-					.hasMoreElements();) {
-				NetworkInterface network = (NetworkInterface) networkInterface.nextElement();
-				for (Enumeration inetAddress = network.getInetAddresses(); inetAddress.hasMoreElements();) {
-					InetAddress address = (InetAddress) inetAddress.nextElement();
-					System.out.println("---------------------------------");
-					System.out.println("Host address:" + address.getHostAddress());
-					System.out.println("Is loop back address:" + address.isLoopbackAddress());
-					System.out.println("Is Site Local back address:" + address.isSiteLocalAddress());
-					System.out.println("Is Link Local back address:" + address.isLinkLocalAddress());
-					System.out.println("Is Any Local back address:" + address.isAnyLocalAddress());
-					System.out.println("---------------------------------");
-					if (address.isSiteLocalAddress())
-						return address.getHostAddress();
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return null;
 	}
 
 	public boolean onRequest(String clientAddress) {

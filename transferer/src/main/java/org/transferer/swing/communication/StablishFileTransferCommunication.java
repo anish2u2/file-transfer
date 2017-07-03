@@ -8,7 +8,6 @@ public class StablishFileTransferCommunication {
 	private Writer writer;
 
 	private Reader reader;
-	
 
 	public void startConversationAsServer(String fileName) {
 		writer.writeFile(fileName);
@@ -16,6 +15,7 @@ public class StablishFileTransferCommunication {
 
 	public void startConversationAsClient(String directoryPath) {
 		reader.readFile(directoryPath);
+		reader.close();
 	}
 
 	public Writer getWriter() {
@@ -34,4 +34,10 @@ public class StablishFileTransferCommunication {
 		this.reader = reader;
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		writer = null;
+		reader = null;
+	}
 }

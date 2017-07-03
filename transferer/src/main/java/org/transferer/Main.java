@@ -3,6 +3,7 @@ package org.transferer;
 import java.io.File;
 
 import org.server.client.contract.Work;
+import org.server.client.logger.LoggerAPI;
 import org.server.client.thread.WorkerThread;
 import org.transferer.swing.components.AppFrame;
 import org.transferer.swing.fileSystem.FileSystemUtility;
@@ -14,6 +15,7 @@ public class Main {
 		frame.setLayoutFlow();
 		frame.setSize(400, 400, 400, 400);
 		frame.setVisible(true);
+		LoggerAPI.setLoggerFilePath(new File("D:/log.txt").getAbsolutePath());
 		frame.startClient(FileSystemUtility.getUserHomeDirectory().getAbsolutePath() + File.separator);
 		WorkerThread.getWorker().startWorking(new Work() {
 

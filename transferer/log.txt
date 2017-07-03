@@ -1,0 +1,82 @@
+[Mon Jul 03 00:16:18 IST 2017 INFO] Numer of Thread:1
+[Mon Jul 03 00:16:18 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Numer of Thread:2
+[Mon Jul 03 00:16:18 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:16:18 IST 2017 INFO] 0.0.0.0/0.0.0.0
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:192.168.137.1
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:192.168.0.103
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:fe80:0:0:0:ccc2:56a9:3bc:15e5%23
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:fe80:0:0:0:1d50:65d7:199e:95e5%17
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:fe80:0:0:0:149a:21a8:98ef:b9b8%16
+[Mon Jul 03 00:16:18 IST 2017 INFO] name of server:Anish-Singh
+[Mon Jul 03 00:16:18 IST 2017 INFO] Server Ip:2001:0:9d38:90d7:149a:21a8:98ef:b9b8
+[Mon Jul 03 00:16:18 IST 2017 INFO] Calling serve request..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Numer of Thread:3
+[Mon Jul 03 00:16:18 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Serv request started..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:16:18 IST 2017 INFO] Now trying to start server.....
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work of serv request..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Numer of Thread:4
+[Mon Jul 03 00:16:18 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] server executed..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work to handle server request..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting Server.............
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:16:18 IST 2017 INFO] Numer of Thread:5
+[Mon Jul 03 00:16:18 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:16:18 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:16:18 IST 2017 INFO] Waiting for PRIORITY_QUEUE .. while fetching reader
+[Mon Jul 03 00:17:37 IST 2017 INFO] Server accepted request..
+[Mon Jul 03 00:17:37 IST 2017 INFO] Adding request to queue..
+[Mon Jul 03 00:17:37 IST 2017 INFO] request added to queue..:54251 
+[Mon Jul 03 00:17:37 IST 2017 INFO] Synchronizing on the server object..
+[Mon Jul 03 00:17:37 IST 2017 INFO] Notiying all objects..
+[Mon Jul 03 00:17:37 IST 2017 INFO] request queue is not empty..
+[Mon Jul 03 00:17:37 IST 2017 INFO] All threads are notified for handling this request..
+[Mon Jul 03 00:17:37 IST 2017 INFO] PRIORITY_QUEUE has notified.. while fetching reader
+[Mon Jul 03 00:17:37 IST 2017 INFO] Object request Aware..org.server.client.imple.server.ServerImpl$1@2b063d99
+[Mon Jul 03 00:17:37 IST 2017 INFO]  Returning back the reader..
+[Mon Jul 03 00:17:37 IST 2017 INFO] Request found now gsending reader..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Starting Server.............
+[Mon Jul 03 00:17:38 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Checking thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Curent work done is null..
+[Mon Jul 03 00:17:38 IST 2017 INFO] Numer of Thread:6
+[Mon Jul 03 00:17:38 IST 2017 INFO] Thread is busy so created new thread...
+[Mon Jul 03 00:17:38 IST 2017 INFO] Starting work.
+[Mon Jul 03 00:17:38 IST 2017 INFO] Waiting for PRIORITY_QUEUE .. while fetching reader

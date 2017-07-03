@@ -1,6 +1,9 @@
 package org.transferer;
 
+import java.io.File;
+
 import org.server.client.contract.Work;
+import org.server.client.logger.LoggerAPI;
 import org.server.client.thread.WorkerThread;
 import org.transferer.swing.components.AppFrame;
 
@@ -14,6 +17,7 @@ public class App {
 		frame.setLayoutFlow();
 		frame.setSize(400, 400, 400, 400);
 		frame.setVisible(true);
+		LoggerAPI.setLoggerFilePath(new File("log.txt").getAbsolutePath());
 		WorkerThread.getWorker().startWorking(new Work() {
 			public void doWork() {
 				while (true) {

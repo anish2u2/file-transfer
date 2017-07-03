@@ -15,6 +15,7 @@ import org.server.client.contract.Client;
 import org.server.client.contract.IpAddressDetail;
 import org.server.client.contract.Reader;
 import org.server.client.contract.Server;
+import org.server.client.contract.StreamInitializer;
 import org.server.client.contract.Wifi;
 import org.server.client.contract.Work;
 import org.server.client.contract.Writer;
@@ -80,6 +81,8 @@ public class AppFrame extends JFrame implements WindowFrame {
 								communication.startConversationAsServer(filePath);
 								System.out.println("File sent..");
 							}
+							System.out.println("Now sending the close connection.");
+							writer.writeUTF(StreamInitializer.END_CONNECTION);
 							writer.flushAndClose();
 						}
 						ThreadUtilityFactory.getInstance().removeAll();

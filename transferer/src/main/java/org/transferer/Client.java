@@ -1,16 +1,13 @@
 package org.transferer;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-
 public class Client {
 
 	public static void main(String[] args) {
 		try {
+			byte value=13;
+			System.out.println(value);
 
-			Socket socket = new Socket("localhost", 80);
+/*			Socket socket = new Socket("localhost", 80);
 			DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 			BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -33,7 +30,7 @@ public class Client {
 			reader.close();
 			outputStream.close();
 			inputStream.close();
-			socket.close();
+			socket.close();*/
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
